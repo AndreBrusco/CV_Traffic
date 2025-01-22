@@ -54,14 +54,14 @@ We experimented with different architectures and hyperparameters to achieve the 
 | Test Accuracy | **98.39%**  |
 | Test Loss     | **0.0911**  |
 
-### **2. Professor's Results**
+### **2. Professor's Results(Example for the class)**
 | Metric        | Value       |
 |---------------|-------------|
 | Test Accuracy | **95.35%**  |
 | Test Loss     | **0.1616**  |
 
 ### **Analysis**
-- Our approach achieved higher accuracy (**98.39%**) and lower test loss (**0.0911**) compared to the professor's results.
+- Our approach achieved higher accuracy (**98.39%**) and lower test loss (**0.0911**) compared to the professor's results(Example for the class).
 - The improvement can be attributed to:
   - An additional convolutional layer (128 filters) in our architecture.
   - A higher dropout rate (0.5) to prevent overfitting.
