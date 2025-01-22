@@ -1,118 +1,88 @@
-## Document ReadME:
+# Traffic Sign Classification with Neural Networks
 
-# Fase 1:
+This repository contains a solution for the Traffic Sign Classification problem, inspired by the [CS50’s Introduction to Artificial Intelligence with Python](https://cs50.harvard.edu/ai/2024/notes/5/). The goal of this project is to classify images of traffic signs using a neural network built with TensorFlow.
 
-On this first try this was our choices.
-We choose:
+---
 
-    model = tf.keras.Sequential([
-        # Convolutional layer with 32 filters, 3x3 kernel, ReLU activation
-        tf.keras.layers.Conv2D(32, (3, 3), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
-        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+## Problem Overview
 
-    # Second convolutional layer with 64 filters
-        tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
-        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+The primary objective is to classify images of traffic signs from the German Traffic Sign Recognition Benchmark (GTSRB) dataset, which includes **43 different categories** of traffic signs. This problem is highly relevant for applications such as autonomous vehicles, where accurate identification of traffic signs is crucial.
 
-    # Flatten the convolutional output
-        tf.keras.layers.Flatten(),
+### **Dataset Details**
+- The GTSRB dataset consists of thousands of labeled images of traffic signs.
+- Each image is categorized into one of 43 classes.
+- Images vary in size, illumination, and quality, making the classification task challenging.
 
-    # Add a dense hidden layer with 64 neurons
-        tf.keras.layers.Dense(64, activation="relu"),
-        tf.keras.layers.Dropout(0.1),  # Dropout for regularization
+---
 
-    # Output layer with NUM_CATEGORIES neurons (softmax activation)
-        tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
-    ])
+## Approach
 
-First Attempt
-Parameters:
-EPOCHS: 15
-IMG_WIDTH, IMG_HEIGHT: 30x30
-NUM_CATEGORIES: 43
-TEST_SIZE: 0.2
-Model Structure:
-2 convolutional layers with 32 and 64 filters
-Flatten layer, Dense(64), Dropout(0.1)
-Output layer with softmax
-Results:
-Accuracy: 0.0529 (5.29%)
-Loss: 3.4886
+### **1. Preprocessing**
+- **Image Resizing**: All images were resized to 30x30 pixels for consistency.
+- **Normalization**: Pixel values were scaled to a range of 0 to 1 for faster training.
+- **One-Hot Encoding**: Labels were converted to one-hot encoded vectors.
 
-Results:
-From the results, we can see that our CNN network struggled to learn meaningful patterns from the data, achieving an accuracy of only 5.29% and a high loss of 3.4886. This suggests that the model is either underfitting or not complex enough to capture the features required for accurate classification. Factors such as insufficient training epochs, overly aggressive dropout, or suboptimal architecture may have limited its performance.
+### **2. Neural Network Architecture**
+We experimented with different architectures and hyperparameters to achieve the best results. The final model used the following structure:
 
-# Fase 2:
+| Layer Type         | Filters/Units | Kernel Size | Activation | Additional Info           |
+|--------------------|---------------|-------------|------------|---------------------------|
+| Conv2D             | 32            | 3x3         | ReLU       | Input shape: (30, 30, 3)  |
+| MaxPooling2D       | -             | 2x2         | -          | -                         |
+| Conv2D             | 64            | 3x3         | ReLU       | -                         |
+| MaxPooling2D       | -             | 2x2         | -          | -                         |
+| Conv2D             | 128           | 3x3         | ReLU       | -                         |
+| MaxPooling2D       | -             | 2x2         | -          | -                         |
+| Flatten            | -             | -           | -          | -                         |
+| Dense              | 128           | -           | ReLU       | -                         |
+| Dropout            | -             | -           | -          | Dropout rate: 0.5         |
+| Dense (Output)     | 43            | -           | Softmax    | -                         |
 
-On the second atempt, we choose this follow parameters and structure:
-EPOCHS = 20
-IMG_WIDTH = 30
-IMG_HEIGHT = 30
-NUM_CATEGORIES = 43
-TEST_SIZE = 0.1
+### **3. Hyperparameters**
+- **Epochs**: 20
+- **Batch Size**: 32
+- **Optimizer**: Adam
+- **Loss Function**: Categorical Crossentropy
 
-    model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(32, (3, 3), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
-    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+---
 
-    tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
-    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+## Results
 
-    tf.keras.layers.Conv2D(128, (3, 3), activation="relu"),
-    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+### **1. Our Results**
+| Metric        | Value       |
+|---------------|-------------|
+| Test Accuracy | **98.39%**  |
+| Test Loss     | **0.0911**  |
 
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(128, activation="relu"),
-    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
-    ])
+### **2. Professor's Results**
+| Metric        | Value       |
+|---------------|-------------|
+| Test Accuracy | **95.35%**  |
+| Test Loss     | **0.1616**  |
 
-Second Attempt
-Parameters:
-EPOCHS: 20
-IMG_WIDTH, IMG_HEIGHT: 30x30
-NUM_CATEGORIES: 43
-TEST_SIZE: 0.1
-Model Structure:
-3 convolutional layers with 32, 64, and 128 filters
-Flatten layer, Dense(128), Dropout(0.5)
-Output layer with softmax
-Results:
-Accuracy: 0.9839 (98.39%)
-Loss: 0.0911
+### **Analysis**
+- Our approach achieved higher accuracy (**98.39%**) and lower test loss (**0.0911**) compared to the professor's results.
+- The improvement can be attributed to:
+  - An additional convolutional layer (128 filters) in our architecture.
+  - A higher dropout rate (0.5) to prevent overfitting.
+  - Training for 20 epochs, providing the model more time to learn.
 
-# Compare with the old results:
+These results demonstrate that careful tuning of hyperparameters and model complexity can significantly improve performance on image classification tasks.
 
-1. Increased Accuracy
-   The accuracy improved from 5.29% to 98.39%, demonstrating that the new architecture captured features much better and generalized effectively on the test data.
-2. Reduced Loss
-   Loss decreased significantly from 3.4886 to 0.0911, indicating the model is now making much better predictions with minimal errors.
-3. Enhanced Network Complexity
-   Adding a third convolutional layer (128 filters) allowed the model to extract deeper features from the images, critical for distinguishing between 43 categories.
-   Using a larger dense layer (128 neurons) likely helped in combining these features effectively for classification.
-4. Increased Regularization
-   Using a higher dropout rate of 0.5 (vs. 0.1 in the first attempt) helped prevent overfitting, contributing to better generalization.
-5. More Epochs
-   Training for 20 epochs instead of 15 gave the model more time to learn, which, combined with a lower TEST_SIZE (10% vs. 20%), ensured more data was available for training.
+---
 
-# Professor's Results
+## Observations
 
-Test Accuracy: 0.9535 (95.35%)
-Test Loss: 0.1616
-Key Features:
-Lower accuracy compared to your model.
-Higher loss (0.1616) than your loss (0.0911), indicating your model is making fewer errors on the test set.
-Comparison
-Accuracy:
+This project shows the importance of deep learning in solving real-world problems, such as traffic sign classification for autonomous vehicles. While our model achieved excellent results, further improvements could be made by:
+- Using data augmentation to increase robustness.
+- Experimenting with transfer learning using pretrained models.
 
-Your model achieved an accuracy of 98.39%, significantly higher than the professor's 95.35%. This demonstrates that your network architecture and hyperparameter choices better capture the features of the traffic sign dataset.
-Loss:
+---
 
-Your loss (0.0911) is much lower than the professor's (0.1616), showing that your predictions are more confident and closer to the ground truth.
-Model Complexity:
+## Disclaimer
 
-Your model used an additional convolutional layer with 128 filters, which likely helped in extracting deeper hierarchical features from the images.
-You increased dropout regularization to 0.5, reducing overfitting.
-Epochs:
+This project was created and made publicly available for **collaboration between programmers**. It is not intended for plagiarism and must not be used to violate academic integrity policies. All work is subject to the rules and regulations of **Harvard University** and **edX**. Violations may result in severe consequences.
 
-You trained for 20 epochs, compared to the professor's 10 epochs. This allowed your model to learn more from the data, contributing to better performance.
+---
+
+Thank you for reviewing this project. Contributions and suggestions are always welcome!
